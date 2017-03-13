@@ -18,7 +18,7 @@ public class triggerPlateform : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         mov = plateforme.GetComponent<movingBehaviour>();
-        handleAnim = handle.GetComponent<Animator>();
+        if(handle) handleAnim = handle.GetComponent<Animator>();
         if(arrow)
         {
             arrowAnim = arrow.GetComponent<Animator>();
@@ -33,7 +33,7 @@ public class triggerPlateform : MonoBehaviour {
     public void restore()
     {
         triggered = false;
-        handleAnim.SetBool("triggered", false);
+        if(handleAnim) handleAnim.SetBool("triggered", false);
         if (arrowAnim)
         {
             arrowAnim.SetBool("triggered", false);
@@ -42,7 +42,6 @@ public class triggerPlateform : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        
         if (other.gameObject.tag == "Player")
         {
             startTime = Time.time;
@@ -59,7 +58,7 @@ public class triggerPlateform : MonoBehaviour {
             {
                 mov.triggerManually();
                 triggered = true;
-                handleAnim.SetBool("triggered", true);
+                if (handleAnim)  handleAnim.SetBool("triggered", true);
                 if (arrowAnim)
                     arrowAnim.SetBool("triggered", true);
             }

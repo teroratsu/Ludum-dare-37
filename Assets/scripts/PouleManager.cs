@@ -65,7 +65,7 @@ public class PouleManager : MonoBehaviour {
         if (dir != oldDir)
         {
             rb.velocity = Vector2.down;
-            if(target)
+            if(target && !GameObject.Find("Scene Manager").GetComponent<SceneManager>().isloading())
             {
                 if (Mathf.Abs(target.transform.position.x - transform.position.x) > .5f)
                 {
@@ -87,9 +87,6 @@ public class PouleManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
-        
-
         if (GameObject.FindGameObjectsWithTag("graines").Length == 0)
         {
             isEatingSomeSeeds = false;
@@ -105,16 +102,14 @@ public class PouleManager : MonoBehaviour {
                 if (dir == Direction.left)
                 {
                     rb.AddForce(Vector2.left * baseSpeed * Time.deltaTime, ForceMode2D.Impulse);
-                    transform.parent = null;
                 }
                 else
                 {
                     rb.AddForce(Vector2.right * baseSpeed * Time.deltaTime, ForceMode2D.Impulse);
-                    transform.parent = null;
                 }
             }
         }
-        if (Input.GetButtonDown("Jump") && jumpCount != 0)
+        if (Input.GetButtonDown("Jump") && onGround && jumpCount != 0)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             transform.parent = null;
@@ -146,6 +141,7 @@ public class PouleManager : MonoBehaviour {
     {
         if(!restored)
         {
+            transform.parent = null;
             collisionNotHandled = colliderCount;
             colliderCount = 0;
             seekingAStack = false;
@@ -153,33 +149,34 @@ public class PouleManager : MonoBehaviour {
             canMove = false;
             isEatingSomeSeeds = false;
             restored = true;
+            target = null;
         }
-        
     }
 
     public bool isAlreadyEating()
     {
         return isEatingSomeSeeds;
     }
+
+    public void isTheKingOfTheWorld(bool areyou)
+    {
+        anim.SetBool("isTheKing", areyou);
+        Debug.Log(areyou);
+    }
     
     void OnCollisionEnter2D(Collision2D hit)
     {
-        if (!GameObject.Find("Scene Manager").GetComponent<SceneManager>().isloading())
-        {
             if (hit.collider.gameObject.tag == "Floor")
             {
                 jumpCount = baseJumpCount;
                 ++colliderCount;
                 onGround = true;
-                rb.AddForce(Vector2.up * rb.velocity.magnitude / 2, ForceMode2D.Impulse);
+                //rb.AddForce(Vector2.up * rb.velocity.magnitude / 2, ForceMode2D.Impulse);
             }
-        }
     }
 
     void OnCollisionExit2D(Collision2D hit)
     {
-        if (!GameObject.Find("Scene Manager").GetComponent<SceneManager>().isloading())
-        {
             if (hit.collider.gameObject.tag == "Floor" && restored)
             {
                 --collisionNotHandled;
@@ -199,6 +196,5 @@ public class PouleManager : MonoBehaviour {
                 if (colliderCount == 0)
                     onGround = false;
             }
-        }
     }
 }

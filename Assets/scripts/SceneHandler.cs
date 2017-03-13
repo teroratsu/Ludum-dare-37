@@ -13,6 +13,8 @@ public class SceneHandler : MonoBehaviour {
     public GameObject startPos; // spawnPos
     private GameManager gameManager;
 
+    private bool ready = false;
+
 	// Use this for initialization
 	void Start () {
         for(int i =0; i< transform.childCount ; ++i)
@@ -22,10 +24,16 @@ public class SceneHandler : MonoBehaviour {
                 mechanisms.Add(transform.GetChild(i).gameObject);
         }
         gameManager =  GameObject.Find("GameController").GetComponent<GameManager>();
+        ready = true;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    public bool isReady()
+    {
+        return ready;
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 
@@ -46,38 +54,53 @@ public class SceneHandler : MonoBehaviour {
         }
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("graines"))
         {
-            Destroy(obj);
+            DestroyImmediate(obj);
         }
         if (!gameManager.inMenu) gameManager.gameObject.GetComponent<spawnMeALilStack>().SetUp(seedCountInfinite, seedCount);
-        GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
         gameManager.gameObject.GetComponent<spawnMeALilStack>().prevent = false;
     }
 
     public void unload()
     {
-        foreach (GameObject child in childs)
+        if(gameObject.name == "Scene 4")
         {
-            child.GetComponent<AnimHandler>().activeElt(false);
-            movingBehaviour bhv = child.GetComponent<movingBehaviour>();
-            if (bhv) bhv.disableMovement();
+            Debug.Log(gameObject.name + " - Bugs :\n");
+            Debug.Log(childs.Count);
+            foreach (GameObject child in childs)
+            {
+                Debug.Log(child.name);
+                child.GetComponent<AnimHandler>().activeElt(false);
+                movingBehaviour bhv = child.GetComponent<movingBehaviour>();
+                if (bhv) bhv.disableMovement();
+            }
+            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("graines"))
+            {
+                DestroyImmediate(obj);
+            }
         }
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("graines"))
+        else
         {
-            Destroy(obj);
+            foreach (GameObject child in childs)
+            {
+                child.GetComponent<AnimHandler>().activeElt(false);
+                movingBehaviour bhv = child.GetComponent<movingBehaviour>();
+                if (bhv) bhv.disableMovement();
+            }
+            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("graines"))
+            {
+                DestroyImmediate(obj);
+            }
         }
     }
 
     IEnumerator ExecuteAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
-        if(GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic == true) GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
     }
 
     public void restore()
     {
         gameManager.gameObject.GetComponent<spawnMeALilStack>().prevent = true;
-        GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
-        GameObject.Find("poule").transform.position = startPos.transform.position;
         GameObject.Find("poule").GetComponent<PouleManager>().restore();
         foreach (GameObject mechanism in mechanisms)
         {
@@ -88,9 +111,10 @@ public class SceneHandler : MonoBehaviour {
         }
         foreach(GameObject obj in GameObject.FindGameObjectsWithTag("graines"))
         {
-            Destroy(obj);
+            DestroyImmediate(obj);
         }
         gameManager.gameObject.GetComponent<spawnMeALilStack>().SetUp(seedCountInfinite, seedCount);
+        GameObject.Find("poule").transform.position = startPos.transform.position;
         gameManager.gameObject.GetComponent<spawnMeALilStack>().prevent = false;
     }
 }

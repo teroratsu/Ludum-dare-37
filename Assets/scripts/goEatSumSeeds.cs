@@ -39,6 +39,10 @@ public class goEatSumSeeds : MonoBehaviour {
                 isSeekingSeedStack = false;
                 pouleManager.setTarget(closest.gameObject);
             }
+            else
+            {
+                pouleManager.setTarget(null);
+            }
         }
     }
 

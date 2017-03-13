@@ -100,6 +100,7 @@ public class movingBehaviour : MonoBehaviour {
         triggeredManually = b_triggeredManually;
         waitingForDelay = b_waitingForDelay;
         transform.position = startPos;
+        GameObject.Find("poule").transform.parent = null;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -122,7 +123,7 @@ public class movingBehaviour : MonoBehaviour {
     {
         if (other.gameObject.tag == "Player")
         {
-            other.transform.parent = null;
+            if(other.transform.parent == this.transform) other.transform.parent = null;
         }
         else if(other.gameObject.tag == "graines")
         {

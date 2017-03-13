@@ -51,7 +51,7 @@ public class eatMePls : MonoBehaviour {
         }
     }
 
-    void OnTriggerLeave2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {

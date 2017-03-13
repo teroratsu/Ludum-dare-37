@@ -15,6 +15,8 @@ public class SceneManager : MonoBehaviour {
     public bool paused = false;
     private bool loading = false;
 
+    private bool needToUnload = false;
+
     private float startTime;
     private float e_t;
 
@@ -27,7 +29,8 @@ public class SceneManager : MonoBehaviour {
         for (int i = 0; i < transform.childCount; ++i)
         {
             scenes.Add(transform.GetChild(i).gameObject);
-            transform.GetChild(i).gameObject.GetComponent<SceneHandler>().unload();
+            if (transform.GetChild(i).gameObject.GetComponent<SceneHandler>().isReady()) transform.GetChild(i).gameObject.GetComponent<SceneHandler>().unload();
+            else needToUnload = true;
         }
         gameOverScene.GetComponent<AnimHandler>().activeElt(false);
         victoryScene.GetComponent<AnimHandler>().activeElt(false);
@@ -38,28 +41,18 @@ public class SceneManager : MonoBehaviour {
         return loading;
     }
 
-    IEnumerator ExecuteAfterTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        scenes[currentSceneID].GetComponent<SceneHandler>().unload();
-        ++currentSceneID;
-        Debug.Log("you did it !");
-        if (currentSceneID >= transform.childCount)
-        {
-            gameManager.victory();
-        }
-        else
-        {
-            scenes[currentSceneID].GetComponent<SceneHandler>().load();
-            GameObject.Find("poule").transform.position = scenes[currentSceneID].GetComponent<SceneHandler>().startPos.transform.position;
-            GameObject.Find("poule").GetComponent<PouleManager>().restore();
-            GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = true;
-        }
-    }
-
     // Update is called once per frame
     void Update () {
+
+        if(needToUnload)
+        {
+            needToUnload = false;
+            for (int i = 0; i < transform.childCount; ++i)
+            {
+                if (transform.GetChild(i).gameObject.GetComponent<SceneHandler>().isReady()) transform.GetChild(i).gameObject.GetComponent<SceneHandler>().unload();
+                else needToUnload = true;
+            }
+        }
 
         if(loading){
             e_t += Time.deltaTime;
@@ -71,13 +64,12 @@ public class SceneManager : MonoBehaviour {
                     Time.timeScale = 1;
                     AudioListener.volume = 1F;
                     paused = false;
+                    GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
                 }
-                GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = true;
                 scenes[currentSceneID].GetComponent<SceneHandler>().unload();
                 ++currentSceneID;
                 scenes[currentSceneID].GetComponent<SceneHandler>().load();
-                GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
-                reloadCurrentScene();
+                
                 gameManager.setinMenu(false);
 
                 loading = false;
@@ -124,6 +116,7 @@ public class SceneManager : MonoBehaviour {
         currentSceneID = 0;
         if (paused)
         {
+            GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
             pauseScene.SetActive(false);
             Time.timeScale = 1;
             AudioListener.volume = 1F;
@@ -134,12 +127,12 @@ public class SceneManager : MonoBehaviour {
 
     public void startGame()
     {
+        gameManager.DisableGUI(false);
         gameManager.setinMenu(false);
         menuScene.GetComponent<SceneHandler>().unload();
         currentSceneID = 0;
         GameObject.Find("poule").transform.position = scenes[currentSceneID].GetComponent<SceneHandler>().startPos.transform.position;
         GameObject.Find("poule").GetComponent<PouleManager>().restore();
-        GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = true;
         scenes[currentSceneID].GetComponent<SceneHandler>().load();
     }
 
@@ -151,7 +144,8 @@ public class SceneManager : MonoBehaviour {
 
     public void victory()
     {
-        gameManager.setinMenu(true);
+        gameManager.DisableGUI(true);
+        victoryScene.SetActive(true);
         victoryScene.GetComponent<AnimHandler>().activeElt(true);
     }
 

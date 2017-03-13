@@ -11,9 +11,12 @@ public class spawnMeALilStack : MonoBehaviour {
     public bool prevent = false;
     private bool preventNextClick = false;
 
+    private SceneManager scManager;
+
     void Start()
     {
         seedCounter = GameObject.Find("seedCounter").GetComponent<UnityEngine.UI.Text>();
+        scManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
     }
 
     // Update is called once per frame
@@ -38,6 +41,7 @@ public class spawnMeALilStack : MonoBehaviour {
     void FixedUpdate()
     {
         seedCounter.text = (!infinite) ? seedCount.ToString() : "∞";
+        if (scManager.isloading()) prevent = true;
     }
 
     public void SetUp(bool inf, int count)

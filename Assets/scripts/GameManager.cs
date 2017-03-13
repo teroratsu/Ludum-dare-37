@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
     spawnMeALilStack spawnerController;
 
     public GameObject gui;
+    private bool disableGUI = false;
 
     public bool inMenu = true;
     public bool unfortunate = false;
@@ -21,21 +22,30 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetButtonDown("Cancel"))
+        if (Input.GetButtonDown("Cancel") && !inMenu)
             sceneManager.pause();
 	}
 
+    public void DisableGUI(bool disable)
+    {
+        disableGUI = disable;
+    }
+
     void FixedUpdate()
     {
-        if(inMenu)
+        if(inMenu || disableGUI)
         {
             gui.SetActive(false);
             spawnerController.enabled = false;
         }
         else
         {
-            gui.SetActive(true);
-            spawnerController.enabled = true; ;
+            if (!disableGUI)
+            {
+                gui.SetActive(true);
+                spawnerController.enabled = true;
+            }
+            
         }
 
         if (spawnerController.seedCount == 0 && GameObject.FindGameObjectsWithTag("graines").Length == 0 && !inMenu && !sceneManager.isloading())
@@ -66,6 +76,7 @@ public class GameManager : MonoBehaviour {
     {
         unfortunate = true;
     }
+
 
     public void victory()
     {
