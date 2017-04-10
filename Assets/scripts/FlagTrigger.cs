@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class FlagTrigger : MonoBehaviour {
 
     private Animator anim, animPoule;
+    public static AudioSource winSnd;
 
     public UnityEvent methods;
 
@@ -13,6 +14,7 @@ public class FlagTrigger : MonoBehaviour {
     void Start () {
         anim = GetComponent<Animator>();
         animPoule = GameObject.Find("poule").GetComponent<Animator>();
+        winSnd = GameObject.Find("Win_seul").GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -26,6 +28,7 @@ public class FlagTrigger : MonoBehaviour {
         {
             anim.SetBool("victory", true);
             animPoule.SetBool("victory", true);
+            winSnd.PlayDelayed(1);
             methods.Invoke();
         }
     }

@@ -37,6 +37,7 @@ public class eatMePls : MonoBehaviour {
             {
                 isBeingEaten = true;
                 pouleManager.isEatingSomeSeeds = true;
+                pouleManager.eatSnd.Play();
             }
         }
     }

@@ -12,7 +12,7 @@ public class AnimHandler : MonoBehaviour {
 
     private float startTime = 0f;
     private float elapsedTime;
-    private float animDuration = 1.5f;
+    private float animDuration = 2f;
 
     private Vector3 startPos;
     private Vector3 dirVec;

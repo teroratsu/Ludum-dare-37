@@ -13,8 +13,10 @@ public class GameManager : MonoBehaviour {
     public bool inMenu = true;
     public bool unfortunate = false;
 
-	// Use this for initialization
-	void Start () {
+    public AudioSource winSeul;
+
+    // Use this for initialization
+    void Start () {
         sceneManager = GameObject.Find("Scene Manager").GetComponent<SceneManager>();
         spawnerController = GetComponent<spawnMeALilStack>();
     }
@@ -81,6 +83,7 @@ public class GameManager : MonoBehaviour {
     public void victory()
     {
         Debug.Log("you did it ! :D");
+        winSeul.Play(1);
     }
 
     public void reTry()

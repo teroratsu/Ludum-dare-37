@@ -13,6 +13,8 @@ public class triggerPlateform : MonoBehaviour {
     float dt;
     public float triggerDelay = 2.0f;
 
+    static AudioSource mecanisme;
+
     public bool triggered = false;
 
 	// Use this for initialization
@@ -23,6 +25,7 @@ public class triggerPlateform : MonoBehaviour {
         {
             arrowAnim = arrow.GetComponent<Animator>();
         }
+        mecanisme = GameObject.Find("mécanisme").GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -56,6 +59,7 @@ public class triggerPlateform : MonoBehaviour {
             dt += Time.deltaTime;
             if (dt - startTime > triggerDelay && !triggered)
             {
+                mecanisme.Play();
                 mov.triggerManually();
                 triggered = true;
                 if (handleAnim)  handleAnim.SetBool("triggered", true);

@@ -26,7 +26,11 @@ public class PouleManager : MonoBehaviour {
     public GameObject target;
     private Rigidbody2D rb;
     private Animator anim;
-    public Direction dir, oldDir; 
+    public Direction dir, oldDir;
+
+    public AudioSource jumpSnd;
+    public AudioSource eatSnd;
+
 
     // Use this for initialization
     void Start () {
@@ -109,11 +113,13 @@ public class PouleManager : MonoBehaviour {
                 }
             }
         }
-        if (Input.GetButtonDown("Jump") && onGround && jumpCount != 0)
+        if (Input.GetButtonDown("Fire2") && onGround && jumpCount != 0)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             transform.parent = null;
             jumpCount -= 1;
+            jumpSnd.Play();
+
         }
         if(target)
         {
@@ -123,6 +129,8 @@ public class PouleManager : MonoBehaviour {
             }
         }
         anim.SetBool("isEating", isEatingSomeSeeds);
+        if (isEatingSomeSeeds && !eatSnd.isPlaying) eatSnd.Play();
+        if (!isEatingSomeSeeds) eatSnd.Stop();
         anim.SetFloat("speed", rb.velocity.magnitude);
         anim.SetBool("onGround", onGround);
     }

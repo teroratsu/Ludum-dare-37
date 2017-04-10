@@ -12,6 +12,7 @@ public class spawnMeALilStack : MonoBehaviour {
     private bool preventNextClick = false;
 
     private SceneManager scManager;
+    public AudioSource seedsSnd;
 
     void Start()
     {
@@ -29,7 +30,8 @@ public class spawnMeALilStack : MonoBehaviour {
                 preventNextClick = false;
             }
             else
-            {            
+            {
+                seedsSnd.Play();
                 Vector3 v3 = Input.mousePosition;
                 v3.z = 0f;
                 v3 = Camera.main.ScreenToWorldPoint(v3);

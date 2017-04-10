@@ -12,6 +12,13 @@ public class SceneManager : MonoBehaviour {
     public GameObject victoryScene;
     private GameManager gameManager;
 
+    public AudioSource menuSnd;
+    public AudioSource décorsSnd;
+    public AudioSource startSnd;
+    public AudioSource winSnd;
+    public AudioSource musicBG;
+    public AudioSource poulettAppearsSnd;
+
     public bool paused = false;
     private bool loading = false;
 
@@ -34,6 +41,7 @@ public class SceneManager : MonoBehaviour {
         }
         gameOverScene.GetComponent<AnimHandler>().activeElt(false);
         victoryScene.GetComponent<AnimHandler>().activeElt(false);
+        menuSnd.Play();
     }
 
     public bool isloading()
@@ -56,7 +64,7 @@ public class SceneManager : MonoBehaviour {
 
         if(loading){
             e_t += Time.deltaTime;
-            if(e_t - startTime > loadDelay)
+            if (e_t - startTime > loadDelay)
             {
                 if (paused)
                 {
@@ -66,12 +74,12 @@ public class SceneManager : MonoBehaviour {
                     paused = false;
                     GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
                 }
+                décorsSnd.Play();
                 scenes[currentSceneID].GetComponent<SceneHandler>().unload();
                 ++currentSceneID;
                 scenes[currentSceneID].GetComponent<SceneHandler>().load();
                 
                 gameManager.setinMenu(false);
-
                 loading = false;
             }
         }
@@ -92,7 +100,8 @@ public class SceneManager : MonoBehaviour {
     {
         GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = true;
         Time.timeScale = 0;
-        AudioListener.volume = 0.2F;
+        musicBG.Pause();
+        menuSnd.UnPause();
         gameManager.setinMenu(true);
         pauseScene.SetActive(true);
         paused = true;
@@ -102,14 +111,17 @@ public class SceneManager : MonoBehaviour {
     {
         GameObject.Find("poule").GetComponent<Rigidbody2D>().isKinematic = false;
         Time.timeScale = 1;
-        AudioListener.volume = 1F;
         gameManager.setinMenu(false);
         pauseScene.SetActive(false);
         paused = false;
+        musicBG.UnPause();
+        menuSnd.Pause();
     }
 
     public void backToMenu()
     {
+        musicBG.Stop();
+        menuSnd.UnPause();
         scenes[currentSceneID].GetComponent<SceneHandler>().restore();
         scenes[currentSceneID].GetComponent<SceneHandler>().unload();
         gameManager.setinMenu(true);
@@ -134,11 +146,17 @@ public class SceneManager : MonoBehaviour {
         GameObject.Find("poule").transform.position = scenes[currentSceneID].GetComponent<SceneHandler>().startPos.transform.position;
         GameObject.Find("poule").GetComponent<PouleManager>().restore();
         scenes[currentSceneID].GetComponent<SceneHandler>().load();
+        menuSnd.Pause();
+        startSnd.Play();
+        musicBG.Play();
+        poulettAppearsSnd.Play();
     }
 
     public void gameOver()
     {
         gameManager.setinMenu(true);
+        musicBG.Pause();
+        menuSnd.UnPause();
         gameOverScene.GetComponent<AnimHandler>().activeElt(true);
     }
 
@@ -147,11 +165,14 @@ public class SceneManager : MonoBehaviour {
         gameManager.DisableGUI(true);
         victoryScene.SetActive(true);
         victoryScene.GetComponent<AnimHandler>().activeElt(true);
+        
     }
 
     public void reloadCurrentScene()
     {
         scenes[currentSceneID].GetComponent<SceneHandler>().restore();
+        musicBG.UnPause();
+        menuSnd.Pause();
     }
 
     public void restore()
